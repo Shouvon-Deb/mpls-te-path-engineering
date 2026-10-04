@@ -1,0 +1,26 @@
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE files
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Cisco IOS images
+*.bin
+*.image
+*.img
+
+# GNS3 temporary/lock files
+*.gns3_lock
+
+# Temporary exports / archives
+*.zip
+*.rar
+*.7z
