@@ -1,0 +1,28 @@
+hostname R5
+
+ip cef
+
+interface Loopback0
+ ip address 10.255.0.5 255.255.255.255
+
+interface FastEthernet1/0
+ ip address 10.0.35.2 255.255.255.252
+ mpls traffic-eng tunnels
+ ip rsvp bandwidth 8000
+ no shutdown
+
+interface FastEthernet2/0
+ ip address 10.0.56.1 255.255.255.252
+ mpls traffic-eng tunnels
+ ip rsvp bandwidth 8000
+ no shutdown
+
+mpls traffic-eng tunnels
+
+router ospf 1
+ router-id 10.255.0.5
+ network 10.0.35.0 0.0.0.3 area 0
+ network 10.0.56.0 0.0.0.3 area 0
+ network 10.255.0.5 0.0.0.0 area 0
+ mpls traffic-eng area 0
+ mpls traffic-eng router-id Loopback0

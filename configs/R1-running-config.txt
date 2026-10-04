@@ -1,0 +1,59 @@
+hostname R1
+
+ip cef
+
+interface Loopback0
+ ip address 10.255.0.1 255.255.255.255
+
+interface FastEthernet0/0
+ ip address 192.168.1.1 255.255.255.0
+ no shutdown
+
+interface FastEthernet1/0
+ ip address 10.0.12.1 255.255.255.252
+ mpls traffic-eng tunnels
+ ip rsvp bandwidth 2000
+ no shutdown
+
+interface FastEthernet2/0
+ ip address 10.0.13.1 255.255.255.252
+ mpls traffic-eng tunnels
+ ip rsvp bandwidth 8000
+ no shutdown
+
+mpls traffic-eng tunnels
+
+router ospf 1
+ router-id 10.255.0.1
+ network 10.0.12.0 0.0.0.3 area 0
+ network 10.0.13.0 0.0.0.3 area 0
+ network 10.255.0.1 0.0.0.0 area 0
+ network 192.168.1.0 0.0.0.255 area 0
+ mpls traffic-eng area 0
+ mpls traffic-eng router-id Loopback0
+
+ip explicit-path name PATH_A enable
+ next-address 10.0.12.2
+ next-address 10.0.24.2
+ next-address 10.0.46.2
+
+ip explicit-path name PATH_B enable
+ next-address 10.0.13.2
+ next-address 10.0.35.2
+ next-address 10.0.56.2
+
+interface Tunnel0
+ ip unnumbered Loopback0
+ tunnel destination 10.255.0.6
+ tunnel mode mpls traffic-eng
+ tunnel mpls traffic-eng bandwidth 1500
+ tunnel mpls traffic-eng path-option 1 explicit name PATH_A
+ tunnel mpls traffic-eng autoroute announce
+
+interface Tunnel1
+ ip unnumbered Loopback0
+ tunnel destination 10.255.0.6
+ tunnel mode mpls traffic-eng
+ tunnel mpls traffic-eng bandwidth 1500
+ tunnel mpls traffic-eng path-option 1 explicit name PATH_B
+ tunnel mpls traffic-eng autoroute announce
