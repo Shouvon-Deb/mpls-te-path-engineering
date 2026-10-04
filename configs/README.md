@@ -1,5 +1,14 @@
 # Router Configurations
 
-This folder contains the running configurations collected from the Cisco routers used in the GNS3 implementation.
+This folder contains the router configuration files used for the MPLS-TE topology.
 
-The Cisco IOS image itself is not included in this repository.
+## Routers
+
+```text
+R1
+R2
+R3
+R4
+R5
+R6
+```
