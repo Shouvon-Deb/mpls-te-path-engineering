@@ -62,10 +62,13 @@ PC1 ─────────────── R1                 R6 ──�
                     │                 │
                     └── R3 ───── R5 ──┘
                            PATH B
+```
 
 With normal IP routing, the network primarily makes forwarding decisions based on routing metrics.
 When traffic conditions change, one feasible path can become heavily utilized while another path still has available capacity.
 The project therefore focuses on:
+
+```text
 Multiple feasible paths
         ↓
 Changing traffic conditions
@@ -73,8 +76,10 @@ Changing traffic conditions
 Need for better path control
         ↓
 MPLS Traffic Engineering
+```
 
-🌐 The Network
+### 🌐 The Network
+
 The lab contains:
 - 6 × Cisco 7200 routers
 - 2 × VPCS hosts
@@ -84,6 +89,7 @@ The lab contains:
 - RSVP-TE
 - 2 explicit TE paths
 - 2 TE tunnels
+
 Topology
                            PATH A
                     ┌── R2 ───── R4 ──┐
@@ -155,25 +161,34 @@ GNS3	Virtual network environment
 ⚙️ Implementation
 MPLS-TE
 The routers were configured to support MPLS Traffic Engineering:
+```text
 ip cef
 mpls traffic-eng tunnels
+```
 
 OSPF was configured to provide TE information:
+```text
 router ospf 1
  mpls traffic-eng area 0
  mpls traffic-eng router-id Loopback0
+```
 
 📡 RSVP-TE
 RSVP-TE was used for signaling and bandwidth reservation.
 The TE tunnels were configured with:
+```text
 1500 kbps
+```
 
 The reservation state was then checked directly from the router.
 🛣️ PATH_A Configuration
 The first explicit path was:
+```text
 R1 → R2 → R4 → R6
+```
 
 The TE tunnel was configured on R1 as:
+```text
 interface Tunnel0
  ip unnumbered Loopback0
  tunnel destination 10.255.0.6
@@ -181,12 +196,16 @@ interface Tunnel0
  tunnel mpls traffic-eng bandwidth 1500
  tunnel mpls traffic-eng path-option 1 explicit name PATH_A
  tunnel mpls traffic-eng autoroute announce
+```
 
 🛣️ PATH_B Configuration
 The second explicit path was:
+```text
 R1 → R3 → R5 → R6
+```
 
 The second TE tunnel was configured as:
+```text
 interface Tunnel1
  ip unnumbered Loopback0
  tunnel destination 10.255.0.6
@@ -194,32 +213,46 @@ interface Tunnel1
  tunnel mpls traffic-eng bandwidth 1500
  tunnel mpls traffic-eng path-option 1 explicit name PATH_B
  tunnel mpls traffic-eng autoroute announce
+```
 
 🔍 Proof It Worked
 I verified the implementation directly from the routers rather than only relying on the configuration being accepted.
+
 🟢 Tunnel 0 — PATH_A
+
 Command:
+```text
 show mpls traffic-eng tunnels tunnel 0
+```
 
 The tunnel was verified as:
+```text
 Admin up
 Oper up
 Path valid
 Signalling connected
+```
 
 The explicit route followed:
+```text
 R1 → R2 → R4 → R6
+```
 
 <p align="center">
   <img src="assets/tunnel-path-a.png" alt="Tunnel 0 PATH_A verification" width="900">
 </p>
 
 🔵 Tunnel 1 — PATH_B
+
 Command:
+```text
 show mpls traffic-eng tunnels tunnel 1
+```
 
 The tunnel was verified as operational with the explicit PATH_B route:
+```text
 R1 → R3 → R5 → R6
+```
 
 <p align="center">
   <img src="assets/tunnel-path-b.png" alt="Tunnel 1 PATH_B verification" width="900">
@@ -227,10 +260,14 @@ R1 → R3 → R5 → R6
 
 📡 RSVP Reservation Verification
 I checked the RSVP state using:
+```text
 show ip rsvp interface
+```
 
 and:
+```text
 show ip rsvp reservation
+```
 
 The configured 1500K reservations were visible on the relevant R1 interfaces.
 <p align="center">
@@ -268,6 +305,7 @@ The end-to-end ICMP test succeeded.
 ⚖️ Baseline vs Proposed Approach
 The project was designed around two network states.
 BASELINE
+```text
 Normal IP Routing
        +
       OSPF
@@ -282,12 +320,14 @@ PROPOSED
     RSVP-TE
        +
  Explicit Paths
+```
 
 The baseline provides normal IP reachability.
 The proposed design adds explicit path control and bandwidth reservation through MPLS-TE.
 🧪 Changing Network Conditions
 The main condition considered by the project is changing traffic demand.
 The idea is:
+```text
 Low traffic
      ↓
 Medium traffic
@@ -295,6 +335,7 @@ Medium traffic
 High traffic
      ↓
 Observe path/resource behavior
+```
 
 The intended measurements are:
 Throughput
@@ -320,6 +361,8 @@ So I am not claiming:
 without actually measuring it.
 That experiment is the natural next step.
 🧪 What I Would Test Next
+
+```text
                  CONTROLLED TRAFFIC
                         │
                         ▼
@@ -346,6 +389,7 @@ That experiment is the natural next step.
          Throughput   Delay      Loss
                         +
                     Utilization
+```
 
 Possible extensions:
 - [ ] Controlled traffic generation
@@ -357,6 +401,8 @@ Possible extensions:
 - [ ] Automatic bandwidth adjustment
 - [ ] Larger topology
 - [ ] More dynamic traffic-engineering logic
+
+
 📁 Project Structure
 mpls-te-path-engineering/
 │
@@ -393,6 +439,7 @@ mpls-te-path-engineering/
 ├── LICENSE
 └── README.md
 
+
 📂 Explore The Repository
 ⚙️ Router Configurations
 → [`configs/`](configs/)
@@ -418,9 +465,7 @@ GNS3   Cisco IOS   OSPF   MPLS   MPLS-TE   RSVP-TE
 3. Cisco, MPLS Basic Traffic Engineering Using OSPF Configuration Example.
 4. J. Celestino Jr. et al., FuDyLBA: A Traffic Engineering Load Balance Scheme for MPLS Networks Based on Fuzzy Logic, Telecommunications and Networking – ICT 2004, Springer.
 5. Cisco, MPLS Traffic Engineering Path Calculation and Setup Configuration Guide, Cisco IOS Release 12.4T.
-📄 Documentation
-The complete academic project report is available here:
-[→ Read the full project report](docs/project-report.pdf)
+
 ⚠️ Reproduction Note
 The Cisco IOS image used for the GNS3 routers is not included in this repository.
 To reproduce the lab, an appropriately licensed Cisco IOS image with the required MPLS-TE/RSVP-TE capabilities is required.
