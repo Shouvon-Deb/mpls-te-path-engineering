@@ -469,11 +469,12 @@ Commands and evidence used to verify the network.
 Full project report and supporting documentation.
 
 🧰 Tools & Technologies
+```
 <div align="center">
 
 GNS3   Cisco IOS   OSPF   MPLS   MPLS-TE   RSVP-TE
 </div>
-```
+
 
 📚 References
 1. D. Awduche et al., Requirements for Traffic Engineering Over MPLS, RFC 2702, IETF, 1999.
