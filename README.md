@@ -403,7 +403,9 @@ Possible extensions:
 - [ ] More dynamic traffic-engineering logic
 
 
-📁 Project Structure
+## 📁 Project Structure
+
+```tree
 mpls-te-path-engineering/
 ├── assets/
 │   ├── hero.gif
@@ -437,8 +439,11 @@ mpls-te-path-engineering/
 ├── .gitignore
 ├── LICENSE
 └── README.md
+```
 
-📂 Explore the Repository
+## 📂 Explore the Repository
+
+```tree
 ⚙️ Router Configurations
 
 → configs/
@@ -464,22 +469,11 @@ Commands and evidence used to verify the network.
 Full project report and supporting documentation.
 
 🧰 Tools & Technologies
-
-🖥️ GNS3 — Network topology simulation and implementation
-
-🔧 Cisco IOS — Router configuration
-
-🌐 OSPF — Interior Gateway Protocol
-
-🔀 MPLS — Multiprotocol Label Switching
-
-🚦 MPLS-TE — MPLS Traffic Engineering
-
-📡 RSVP-TE — Resource Reservation Protocol – Traffic Engineering
 <div align="center">
 
 GNS3   Cisco IOS   OSPF   MPLS   MPLS-TE   RSVP-TE
 </div>
+```
 
 📚 References
 1. D. Awduche et al., Requirements for Traffic Engineering Over MPLS, RFC 2702, IETF, 1999.
