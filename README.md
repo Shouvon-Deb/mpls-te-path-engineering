@@ -403,7 +403,7 @@ Possible extensions:
 - [ ] More dynamic traffic-engineering logic
 
 
-📁 Project Structure
+## 📁 Project Structure
 mpls-te-path-engineering/
 │
 ├── assets/
@@ -440,19 +440,28 @@ mpls-te-path-engineering/
 └── README.md
 
 
-📂 Explore The Repository
+
+📂 Explore the Repository
 ⚙️ Router Configurations
-→ [`configs/`](configs/)
+→ configs/
+
 Actual router configurations used in the GNS3 implementation.
+
 📐 Topology
-→ [`topology/`](topology/)
+→ topology/
+
 Addressing plan and topology information.
+
 🔍 Verification
-→ [`verification/`](verification/)
+→ verification/
+
 Commands and evidence used to verify the network.
+
 📄 Documentation
-→ [`docs/`](docs/)
+→ docs/
+
 Full project report and supporting documentation.
+
 🧰 Tools & Technologies
 <div align="center">
 
