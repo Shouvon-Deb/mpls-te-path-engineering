@@ -23,14 +23,12 @@ This folder contains the portable GNS3 project used to build and test the MPLS T
 
 ```text
 R1 → R2 → R4 → R6
+```
 
-PATH_B
-R1 → R3 → R5 → R6
-
-The Cisco IOS image is not included. A legally obtained IOS image with the required MPLS-TE/RSVP-TE capabilities is required to run the project.
-
-
-Commit message:
+**PATH_B**
 
 ```text
-Add GNS3 project documentation
+R1 → R3 → R5 → R6
+```
+
+The Cisco IOS image is not included. A legally obtained IOS image with the required MPLS-TE/RSVP-TE capabilities is required to run the project.
