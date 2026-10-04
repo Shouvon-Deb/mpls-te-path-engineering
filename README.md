@@ -1,433 +1,481 @@
 <div align="center">
-MPLS Traffic Engineering Lab
-Explicit LSP Path Engineering with MPLS-TE & RSVP-TE
 
-A hands-on Cisco IOS + GNS3 project exploring how traffic can be engineered across multiple paths using MPLS Traffic Engineering and RSVP-TE.
+# ⚡ MPLS-TE PATH ENGINEERING
+
+### Two paths. One destination. More control over the traffic.
 
 <br>
 
-
-
-
-
-
+<img src="https://img.shields.io/badge/GNS3-Lab-6C5CE7?style=for-the-badge" alt="GNS3">
+<img src="https://img.shields.io/badge/Cisco%207200-IOS-1BA0D7?style=for-the-badge" alt="Cisco">
+<img src="https://img.shields.io/badge/OSPF-Routing-FF6B35?style=for-the-badge" alt="OSPF">
+<img src="https://img.shields.io/badge/MPLS--TE-Traffic%20Engineering-00B894?style=for-the-badge" alt="MPLS-TE">
+<img src="https://img.shields.io/badge/RSVP--TE-Signaling-0984E3?style=for-the-badge" alt="RSVP-TE">
 
 <br><br>
 
-Topology ·
-Implementation ·
-Verification ·
-Repository
+[ **TOPOLOGY** ](#-the-network) &nbsp; • &nbsp;
+[ **IMPLEMENTATION** ](#-how-it-works) &nbsp; • &nbsp;
+[ **VERIFICATION** ](#-proof-it-worked) &nbsp; • &nbsp;
+[ **CONFIGS** ](#-project-files) &nbsp; • &nbsp;
+[ **REPORT** ](#-documentation)
 
 </div>
-🔎 Project Overview
 
-This project implements MPLS Traffic Engineering (MPLS-TE) with RSVP-TE in a GNS3-based Cisco IOS network.
+---
 
-The main goal is to demonstrate how traffic can be given explicit path control instead of relying only on the normal OSPF shortest-path decision.
+<div align="center">
 
-Two engineered paths were created between the ingress router R1 and the egress router R6:
+## 🎬 THE PROJECT IN ACTION
 
-PATH_A
+<img src="assets/hero.gif" alt="MPLS-TE Path Engineering Demo" width="900">
+
+</div>
+
+---
+
+# 🧭 Why I Built This
+
+I wanted to work on a networking problem that was more interesting than simply making two computers ping each other.
+
+The network has **more than one possible path** between the source and destination.
+
+That creates a simple question:
+
+> **If I have two possible paths, how much control can I get over where the traffic actually goes?**
+
+So I built the network in GNS3 and used **MPLS Traffic Engineering (MPLS-TE)** with **RSVP-TE** to create explicitly engineered paths between the ingress and egress routers.
+
+---
+
+# 🚦 The Problem
+
+The network contains two feasible paths:
+
+```text
+                           PATH A
+                    ┌── R2 ───── R4 ──┐
+                    │                 │
+                    │                 │
+PC1 ─────────────── R1                 R6 ─────────────── PC2
+                    │                 │
+                    │                 │
+                    └── R3 ───── R5 ──┘
+                           PATH B
+```
+
+With normal IP routing, the network primarily makes forwarding decisions based on routing metrics.
+When traffic conditions change, one feasible path can become heavily utilized while another path still has available capacity.
+The project therefore focuses on:
+
+```text
+Multiple feasible paths
+        ↓
+Changing traffic conditions
+        ↓
+Need for better path control
+        ↓
+MPLS Traffic Engineering
+```
+
+### 🌐 The Network
+
+The lab contains:
+- 6 × Cisco 7200 routers
+- 2 × VPCS hosts
+- OSPF
+- MPLS
+- MPLS Traffic Engineering
+- RSVP-TE
+- 2 explicit TE paths
+- 2 TE tunnels
+
+Topology
+                           PATH A
+                    ┌── R2 ───── R4 ──┐
+                    │                 │
+                    │                 │
+PC1 ─────────────── R1                 R6 ─────────────── PC2
+                    │                 │
+                    │                 │
+                    └── R3 ───── R5 ──┘
+                           PATH B
+
+<p align="center">
+  <img src="assets/topology.png" alt="MPLS-TE GNS3 topology" width="900">
+</p>
+
+🛣️ Two Engineered Paths
+PATH A
 R1 → R2 → R4 → R6
 
-PATH_B
-R1 → R3 → R5 → R6
-
-Two MPLS-TE tunnels were configured so that each tunnel follows one of these explicit paths.
-
-💡 Why This Project?
-
-In a normal IP routing environment, OSPF selects paths according to its routing metric.
-
-That works well for basic connectivity, but it does not provide direct control over how traffic should be placed across different available paths.
-
-This project explores that problem using:
-
-OSPF
-↓
-IP Reachability
-↓
-MPLS
-↓
-MPLS Traffic Engineering
-↓
-RSVP-TE
-↓
-Explicit LSP Paths
-
-The result is a network where the engineered paths can be explicitly defined and verified.
-
-🗺️ Topology
-<p align="center"> <img src="assets/topology.png" alt="MPLS-TE GNS3 topology" width="850"> </p>
-Network Paths
-                     PATH_A
-               R2 ───────── R4
-              /              \
-             /                \
-           R1                  R6
-             \                /
-              \              /
-               R3 ───────── R5
-                     PATH_B
-
-Endpoints
-
-PC1
-192.168.1.10
-│
-▼
-R1
-│
-│ MPLS-TE
-│
-R6
-│
-▼
-PC2
-192.168.2.10
-
-The actual engineered branches are:
-
-PATH_A → R1 → R2 → R4 → R6
-
-PATH_B → R1 → R3 → R5 → R6
-
-⚙️ Implementation
-Technologies
-Technology	Role
-GNS3	Network simulation
-Cisco IOS	Router platform
-OSPF	Interior routing / IP reachability
-MPLS	Label-based forwarding
-MPLS-TE	Traffic-engineered LSPs
-RSVP-TE	Signaling and bandwidth reservation
-Explicit Paths	Control over LSP routing
-VPCS	Endpoint connectivity testing
-🧩 Router Roles
-Router	Role
-R1	MPLS-TE ingress
-R2	PATH_A intermediate router
-R3	PATH_B intermediate router
-R4	PATH_A intermediate router
-R5	PATH_B intermediate router
-R6	MPLS-TE egress
-🛣️ Engineered Paths
+Configured as:
 PATH_A
 
-R1
-│
-▼
-R2
-│
-▼
-R4
-│
-▼
-R6
+PATH B
+R1 → R3 → R5 → R6
 
-Explicit addresses:
-
-10.0.12.2
-10.0.24.2
-10.0.46.2
-
+Configured as:
 PATH_B
 
-R1
-│
-▼
-R3
-│
-▼
-R5
-│
-▼
-R6
+The two paths were deliberately created so that traffic engineering could be observed and verified rather than using a single route.
+🧠 How The Pieces Fit Together
+The implementation uses several networking technologies together:
+                    OSPF
+                     │
+                     │
+              Network topology
+              and IP reachability
+                     │
+                     ▼
+                   MPLS
+                     │
+                     │
+              Label forwarding
+                     │
+                     ▼
+                 MPLS-TE
+                     │
+                     │
+               Path control
+                     │
+                     ▼
+                 RSVP-TE
+                     │
+                     │
+            Signaling + reservation
+                     │
+                     ▼
+               TE LSP / Tunnel
 
-Explicit addresses:
+In simple terms
+Technology	Role in this project
+OSPF	Underlying IP routing and topology information
+MPLS	Label-based forwarding
+MPLS-TE	Traffic path engineering
+RSVP-TE	TE tunnel signaling and resource reservation
+Explicit Paths	Define the intended route
+GNS3	Virtual network environment
 
-10.0.13.2
-10.0.35.2
-10.0.56.2
 
-🚇 MPLS-TE Tunnels
+⚙️ Implementation
+MPLS-TE
+The routers were configured to support MPLS Traffic Engineering:
+```text
+ip cef
+mpls traffic-eng tunnels
+```
 
-Two TE tunnels were configured on R1.
-
-Tunnel	Destination	Explicit Path	Bandwidth
-Tunnel0	R6	PATH_A	1500 kbps
-Tunnel1	R6	PATH_B	1500 kbps
-Tunnel0
-
-interface Tunnel0
-tunnel destination 10.255.0.6
-tunnel mode mpls traffic-eng
-tunnel mpls traffic-eng bandwidth 1500
-tunnel mpls traffic-eng path-option 1 explicit name PATH_A
-tunnel mpls traffic-eng autoroute announce
-
-Tunnel1
-
-interface Tunnel1
-tunnel destination 10.255.0.6
-tunnel mode mpls traffic-eng
-tunnel mpls traffic-eng bandwidth 1500
-tunnel mpls traffic-eng path-option 1 explicit name PATH_B
-tunnel mpls traffic-eng autoroute announce
+OSPF was configured to provide TE information:
+```text
+router ospf 1
+ mpls traffic-eng area 0
+ mpls traffic-eng router-id Loopback0
+```
 
 📡 RSVP-TE
-
-RSVP-TE is used to signal the traffic-engineered tunnels and reserve their requested resources.
-
-Each tunnel requests:
-
+RSVP-TE was used for signaling and bandwidth reservation.
+The TE tunnels were configured with:
+```text
 1500 kbps
+```
 
-The implementation successfully established two RSVP reservations between:
+The reservation state was then checked directly from the router.
+🛣️ PATH_A Configuration
+The first explicit path was:
+```text
+R1 → R2 → R4 → R6
+```
 
-10.255.0.1 → 10.255.0.6
+The TE tunnel was configured on R1 as:
+```text
+interface Tunnel0
+ ip unnumbered Loopback0
+ tunnel destination 10.255.0.6
+ tunnel mode mpls traffic-eng
+ tunnel mpls traffic-eng bandwidth 1500
+ tunnel mpls traffic-eng path-option 1 explicit name PATH_A
+ tunnel mpls traffic-eng autoroute announce
+```
 
-<p align="center"> <img src="assets/rsvp-reservations.png" alt="RSVP-TE reservations" width="850"> </p>
-✅ Verification
+🛣️ PATH_B Configuration
+The second explicit path was:
+```text
+R1 → R3 → R5 → R6
+```
 
-The project was verified at multiple stages rather than relying only on end-to-end ping.
+The second TE tunnel was configured as:
+```text
+interface Tunnel1
+ ip unnumbered Loopback0
+ tunnel destination 10.255.0.6
+ tunnel mode mpls traffic-eng
+ tunnel mpls traffic-eng bandwidth 1500
+ tunnel mpls traffic-eng path-option 1 explicit name PATH_B
+ tunnel mpls traffic-eng autoroute announce
+```
 
-OSPF
+🔍 Proof It Worked
+I verified the implementation directly from the routers rather than only relying on the configuration being accepted.
 
-show ip ospf neighbor
-show ip route
+🟢 Tunnel 0 — PATH_A
 
-<p align="center"> <img src="assets/ospf-neighbors.png" alt="OSPF neighbors" width="850"> </p>
-Tunnel0 — PATH_A
-
+Command:
+```text
 show mpls traffic-eng tunnels tunnel 0
+```
 
-Expected operational state:
+The tunnel was verified as:
+```text
+Admin up
+Oper up
+Path valid
+Signalling connected
+```
 
-Admin: up
-Oper: up
-Path: valid
-Signalling: connected
+The explicit route followed:
+```text
+R1 → R2 → R4 → R6
+```
 
-<p align="center"> <img src="assets/tunnel-path-a.png" alt="MPLS-TE PATH_A verification" width="850"> </p>
-Tunnel1 — PATH_B
+<p align="center">
+  <img src="assets/tunnel-path-a.png" alt="Tunnel 0 PATH_A verification" width="900">
+</p>
 
+🔵 Tunnel 1 — PATH_B
+
+Command:
+```text
 show mpls traffic-eng tunnels tunnel 1
+```
 
-Expected operational state:
+The tunnel was verified as operational with the explicit PATH_B route:
+```text
+R1 → R3 → R5 → R6
+```
 
-Admin: up
-Oper: up
-Path: valid
-Signalling: connected
+<p align="center">
+  <img src="assets/tunnel-path-b.png" alt="Tunnel 1 PATH_B verification" width="900">
+</p>
 
-<p align="center"> <img src="assets/tunnel-path-b.png" alt="MPLS-TE PATH_B verification" width="850"> </p>
-🌐 End-to-End Connectivity
-PC1
+📡 RSVP Reservation Verification
+I checked the RSVP state using:
+```text
+show ip rsvp interface
+```
 
-192.168.1.10
+and:
+```text
+show ip rsvp reservation
+```
 
-PC2
+The configured 1500K reservations were visible on the relevant R1 interfaces.
+<p align="center">
+  <img src="assets/rsvp-reservations.png" alt="RSVP-TE reservation verification" width="900">
+</p>
 
-192.168.2.10
-
-Connectivity was tested using:
-
+📶 End-to-End Connectivity
+After configuring the network and TE tunnels, I tested connectivity from PC1 to PC2.
 ping 192.168.2.10
 
-The endpoint ping was successful.
+The end-to-end ICMP test succeeded.
+<p align="center">
+  <img src="assets/connectivity-test.png" alt="PC1 to PC2 connectivity test" width="900">
+</p>
 
-<p align="center"> <img src="assets/connectivity-test.png" alt="PC1 to PC2 connectivity test" width="850"> </p>
-📊 What Was Verified?
-Verification	Result
-OSPF neighbor establishment	✅ Successful
-OSPF route learning	✅ Successful
-MPLS-TE Tunnel0	✅ Up
-MPLS-TE Tunnel1	✅ Up
-PATH_A	✅ Valid
-PATH_B	✅ Valid
-RSVP-TE reservations	✅ Established
-PC1 → PC2 connectivity	✅ Successful
-🎯 What This Project Demonstrates
+📊 Project Snapshot
+<div align="center">
 
-This implementation demonstrates:
+	
+🖥️ Virtual Lab	GNS3
+🌐 Routers	6 × Cisco 7200
+💻 Hosts	2 × VPCS
+🔀 Routing	OSPF
+🏷️ Switching	MPLS
+🛣️ Traffic Engineering	MPLS-TE
+📡 Signaling	RSVP-TE
+🧭 Engineered Paths	2
+🚇 TE Tunnels	2
+📶 Tunnel Bandwidth	1500 kbps
+🔗 Connectivity	PC1 → PC2 verified
 
-OSPF-based IP reachability
 
-MPLS forwarding
+</div>
 
-MPLS Traffic Engineering
+⚖️ Baseline vs Proposed Approach
+The project was designed around two network states.
+BASELINE
+```text
+Normal IP Routing
+       +
+      OSPF
 
-RSVP-TE signaling
+PROPOSED
+      OSPF
+       +
+      MPLS
+       +
+    MPLS-TE
+       +
+    RSVP-TE
+       +
+ Explicit Paths
+```
 
-Explicit LSP path selection
+The baseline provides normal IP reachability.
+The proposed design adds explicit path control and bandwidth reservation through MPLS-TE.
+🧪 Changing Network Conditions
+The main condition considered by the project is changing traffic demand.
+The idea is:
+```text
+Low traffic
+     ↓
+Medium traffic
+     ↓
+High traffic
+     ↓
+Observe path/resource behavior
+```
 
-Bandwidth reservation
-
-Multiple engineered paths
-
-MPLS-TE tunnel establishment
-
-End-to-end connectivity
-
-⚠️ Performance Scope
-
-This repository does not claim that MPLS-TE produced a specific percentage improvement in network performance.
-
-The current work verifies the implementation and operation of the MPLS-TE environment.
-
-A proper quantitative comparison would require a controlled traffic experiment comparing:
-
-OSPF Baseline
-↓
-Traffic Load
-↓
-Measure Performance
-↓
-MPLS-TE + RSVP-TE
-↓
-Same Traffic Load
-↓
-Compare Results
-
-Potential metrics for that experiment include:
-
+The intended measurements are:
 Throughput
-
 Delay
-
 Packet loss
+Interface utilization
+Path behavior
 
-Link utilization
+⚠️ A Note About The Results
+I am deliberately not inventing a performance improvement percentage.
+The captured implementation evidence verifies:
+- OSPF connectivity
+- MPLS-TE configuration
+- RSVP-TE signaling
+- explicit paths
+- TE tunnel establishment
+- bandwidth reservation
+- end-to-end connectivity
+However, the current captured evidence does not contain a completed controlled high-load baseline-versus-MPLS-TE performance experiment.
+So I am not claiming:
+"Throughput improved by X%"
 
-Path utilization
+without actually measuring it.
+That experiment is the natural next step.
+🧪 What I Would Test Next
 
-Behavior under congestion
+```text
+                 CONTROLLED TRAFFIC
+                        │
+                        ▼
+                ┌───────────────┐
+                │    BASELINE   │
+                │    IP / OSPF  │
+                └───────┬───────┘
+                        │
+                  Measurements
+                        │
+                        ▼
+                ┌───────────────┐
+                │    MPLS-TE    │
+                │  ENGINEERED   │
+                └───────┬───────┘
+                        │
+                  Measurements
+                        │
+                        ▼
+                   COMPARISON
+                        │
+             ┌──────────┼──────────┐
+             ▼          ▼          ▼
+         Throughput   Delay      Loss
+                        +
+                    Utilization
+```
 
-🔬 Future Work
+Possible extensions:
+- [ ] Controlled traffic generation
+- [ ] Baseline vs MPLS-TE throughput comparison
+- [ ] Delay comparison
+- [ ] Packet-loss comparison
+- [ ] Interface utilization analysis
+- [ ] Failure and recovery testing
+- [ ] Automatic bandwidth adjustment
+- [ ] Larger topology
+- [ ] More dynamic traffic-engineering logic
 
- Generate controlled traffic across the topology
 
- Establish an OSPF-only baseline
-
- Measure link utilization
-
- Measure throughput and delay
-
- Measure packet loss under load
-
- Introduce controlled congestion
-
- Compare OSPF and MPLS-TE results
-
- Test engineered-path failure and recovery
-
- Explore dynamic traffic engineering strategies
-
-📁 Repository Structure
-
+📁 Project Structure
 mpls-te-path-engineering/
 │
 ├── assets/
-│ ├── topology.png
-│ ├── tunnel-path-a.png
-│ ├── tunnel-path-b.png
-│ ├── rsvp-reservations.png
-│ ├── ospf-neighbors.png
-│ ├── connectivity-test.png
-│ ├── hero.gif
-│ ├── logo.png
-│ └── project-preview.png
+│   ├── hero.gif
+│   ├── topology.png
+│   ├── tunnel-path-a.png
+│   ├── tunnel-path-b.png
+│   ├── rsvp-reservations.png
+│   └── connectivity-test.png
 │
 ├── configs/
-│ ├── R1-running-config.txt
-│ ├── R2-running-config.txt
-│ ├── R3-running-config.txt
-│ ├── R4-running-config.txt
-│ ├── R5-running-config.txt
-│ └── R6-running-config.txt
+│   ├── R1-running-config.txt
+│   ├── R2-running-config.txt
+│   ├── R3-running-config.txt
+│   ├── R4-running-config.txt
+│   ├── R5-running-config.txt
+│   └── R6-running-config.txt
 │
 ├── docs/
-│ ├── implementation-notes.md
-│ ├── viva-notes.md
-│ └── README.md
-│
-├── gns3/
-│ ├── mpls-te-path-engineering.gns3project
-│ └── README.md
+│   ├── project-report.pdf
+│   └── viva-notes.md
 │
 ├── topology/
-│ ├── addressing-plan.md
-│ ├── topology-notes.md
-│ └── README.md
+│   ├── addressing-plan.md
+│   └── topology-notes.md
 │
 ├── verification/
-│ ├── tunnel-commands.md
-│ ├── rsvp-verification.md
-│ ├── connectivity-tests.md
-│ └── README.md
+│   ├── tunnel-commands.md
+│   ├── rsvp-verification.md
+│   └── connectivity-tests.md
 │
 ├── .gitignore
 ├── LICENSE
 └── README.md
 
-🧪 Reproducing the Lab
 
-To reproduce the project:
-
-Install GNS3.
-
-Use a compatible Cisco IOS image.
-
-Import the GNS3 project from gns3/.
-
-Start the routers and VPCS nodes.
-
-Verify OSPF connectivity.
-
-Verify MPLS-TE tunnel status.
-
-Verify RSVP-TE reservations.
-
-Test PC1-to-PC2 connectivity.
-
-Note: Cisco IOS images are intentionally not included in this repository.
-
-📚 Documentation
-
-More detailed information is available in:
-
-docs/implementation-notes.md
-
-docs/viva-notes.md
-
-topology/addressing-plan.md
-
-topology/topology-notes.md
-
-verification/tunnel-commands.md
-
-verification/rsvp-verification.md
-
-verification/connectivity-tests.md
-
-📖 References
-
-D. Awduche et al., "Requirements for Traffic Engineering Over MPLS," RFC 2702, IETF, 1999.
-
-D. Awduche et al., "RSVP-TE: Extensions to RSVP for LSP Tunnels," RFC 3209, IETF, 2001.
-
-Cisco, "MPLS Basic Traffic Engineering Using OSPF Configuration Example."
-
-Celestino Jr. et al., "FuDyLBA: A Traffic Engineering Load Balance Scheme for MPLS Networks Based on Fuzzy Logic," Springer, 2004.
-
-Cisco, "MPLS Traffic Engineering Path Calculation and Setup Configuration Guide."
-
+📂 Explore The Repository
+⚙️ Router Configurations
+→ [`configs/`](configs/)
+Actual router configurations used in the GNS3 implementation.
+📐 Topology
+→ [`topology/`](topology/)
+Addressing plan and topology information.
+🔍 Verification
+→ [`verification/`](verification/)
+Commands and evidence used to verify the network.
+📄 Documentation
+→ [`docs/`](docs/)
+Full project report and supporting documentation.
+🧰 Tools & Technologies
 <div align="center">
 
-Built and tested in GNS3
-
-MPLS • MPLS-TE • RSVP-TE • OSPF • Cisco IOS
-
+GNS3   Cisco IOS   OSPF   MPLS   MPLS-TE   RSVP-TE
 </div>
+
+📚 References
+1. D. Awduche et al., Requirements for Traffic Engineering Over MPLS, RFC 2702, IETF, 1999.
+2. D. Awduche et al., RSVP-TE: Extensions to RSVP for LSP Tunnels, RFC 3209, IETF, 2001.
+3. Cisco, MPLS Basic Traffic Engineering Using OSPF Configuration Example.
+4. J. Celestino Jr. et al., FuDyLBA: A Traffic Engineering Load Balance Scheme for MPLS Networks Based on Fuzzy Logic, Telecommunications and Networking – ICT 2004, Springer.
+5. Cisco, MPLS Traffic Engineering Path Calculation and Setup Configuration Guide, Cisco IOS Release 12.4T.
+
+⚠️ Reproduction Note
+The Cisco IOS image used for the GNS3 routers is not included in this repository.
+To reproduce the lab, an appropriately licensed Cisco IOS image with the required MPLS-TE/RSVP-TE capabilities is required.
+The repository contains my project configurations, topology information, verification commands and documentation.
+<div align="center">
+
+Built, configured and tested by me.
+MPLS-TE Path Engineering
+GNS3 • Cisco IOS • OSPF • MPLS • RSVP-TE
+
+⭐ If you found the project useful, feel free to explore the configurations and verification steps.
+</div>
+```
