@@ -29,71 +29,62 @@ The lab implements two explicitly defined paths between the ingress router (R1) 
 
 ### PATH_A – Upper Route
 
-```text```
+```text
 R1 ── R2 ── R4 ── R6
-PATH_B – Lower Route
+```
 
-```text```
+### PATH_B – Lower Route
+
+```text
 R1 ── R3 ── R5 ── R6
+```
+
 Both paths provide alternative routes through the MPLS core, allowing the behavior of explicit-path traffic engineering to be explored and tested.
 
-⚙️ Technologies
-GNS3 – Network emulation platform
+## ⚙️ Technologies
 
-Cisco IOS (7200) – Router operating system
+- **GNS3** – Network emulation platform
+- **Cisco IOS (7200)** – Router operating system
+- **OSPF** – IGP routing protocol
+- **MPLS** – Multiprotocol Label Switching
+- **MPLS-TE** – Traffic Engineering extensions
+- **RSVP-TE** – Resource Reservation Protocol for TE
+- **Explicit Routing** – Manually controlled traffic paths
 
-OSPF – IGP routing protocol
+## 📋 Requirements
 
-MPLS – Multiprotocol Label Switching
-
-MPLS-TE – Traffic Engineering extensions
-
-RSVP-TE – Resource Reservation Protocol for TE
-
-Explicit Routing – Manually controlled traffic paths
-
-📋 Requirements
 Before running the project, ensure you have:
 
-GNS3 installed and configured.
+- GNS3 installed and configured.
+- A compatible Cisco 7200 IOS image.
+- IOS support for MPLS, MPLS-TE, and RSVP-TE.
+- Sufficient system resources to run six virtual routers and two VPCS hosts.
 
-A compatible Cisco 7200 IOS image.
+> [!IMPORTANT]
+> The Cisco IOS image is **not included** in this repository. You must provide a legally obtained IOS image with the required MPLS-TE and RSVP-TE capabilities.
 
-IOS support for MPLS, MPLS-TE, and RSVP-TE.
+## ▶️ Getting Started
 
-Sufficient system resources to run six virtual routers and two VPCS hosts.
+1. Clone or download this repository.
+2. Open GNS3.
+3. Import `mpls-te-path-engineering.gns3project`.
+4. Configure the required Cisco IOS image for the routers.
+5. Start the network devices.
+6. Apply the router configurations and test MPLS-TE connectivity.
 
-[!IMPORTANT]
-The Cisco IOS image is not included in this repository. You must provide a legally obtained IOS image with the required MPLS-TE and RSVP-TE capabilities.
+## 🎯 Learning Objectives
 
-▶️ Getting Started
-Clone or download this repository.
-
-Open GNS3.
-
-Import mpls-te-path-engineering.gns3project.
-
-Configure the required Cisco IOS image for the routers.
-
-Start the network devices.
-
-Apply the router configurations and test MPLS-TE connectivity.
-
-🎯 Learning Objectives
 This lab provides a practical environment to explore:
 
-MPLS label switching and forwarding.
+- MPLS label switching and forwarding.
+- OSPF-based routing in an MPLS core.
+- RSVP-TE signaling and tunnel establishment.
+- Explicit-path configuration.
+- Traffic engineering across alternative network paths.
+- MPLS-TE tunnel behavior and path verification.
 
-OSPF-based routing in an MPLS core.
+---
 
-RSVP-TE signaling and tunnel establishment.
-
-Explicit-path configuration.
-
-Traffic engineering across alternative network paths.
-
-MPLS-TE tunnel behavior and path verification.
-
-Project: MPLS Traffic Engineering
-Platform: GNS3
-Router Platform: Cisco 7200
+**Project:** MPLS Traffic Engineering  
+**Platform:** GNS3  
+**Router Platform:** Cisco 7200
