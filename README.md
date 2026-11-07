@@ -427,6 +427,10 @@ mpls-te-path-engineering/
 │   ├── project-report.pdf
 │   └── viva-notes.md
 │
+├── gns3/
+│   ├── mpls-te-path-engineering.gns3project
+│   └── README.md
+│
 ├── topology/
 │   ├── addressing-plan.md
 │   └── topology-notes.md
